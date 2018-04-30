@@ -19,7 +19,11 @@ TicTacToeBoard::TicTacToeBoard()
 **/
 Piece TicTacToeBoard::toggleTurn()
 {
-  return Invalid;
+  if (turn == X)
+    turn = O;
+  else if (turn == O)
+    turn = X;
+  return turn;
 }
 
 /**
@@ -33,7 +37,16 @@ Piece TicTacToeBoard::toggleTurn()
 **/ 
 Piece TicTacToeBoard::placePiece(int row, int column)
 {
-  return Invalid;
+  if (row < 0 || row >= BOARDSIZE || column < 0 || column >= BOARDSIZE)
+    return Invalid;
+  if (getWinner() == 'X' || getWinner() == 'O')
+    return Invalid;
+  if (board[row][column] == Blank) {
+    board[row][column] = turn;
+    toggleTurn();
+    return board[row][column];
+  }
+  else return board[row][column];
 }
 
 /**
@@ -42,7 +55,9 @@ Piece TicTacToeBoard::placePiece(int row, int column)
 **/
 Piece TicTacToeBoard::getPiece(int row, int column)
 {
-  return Invalid;
+  if (row < 0 || row >= BOARDSIZE || column < 0 || column >= BOARDSIZE)
+    return Invalid;
+  return board[row][column];
 }
 
 /**
@@ -51,5 +66,37 @@ Piece TicTacToeBoard::getPiece(int row, int column)
 **/
 Piece TicTacToeBoard::getWinner()
 {
+  int i;
+  //Horizontal wins
+  for (i = 0; i < 3; i++) {
+    if (board[i][0]==X && board[i][1]==X && board[i][2] == X)
+      return X;
+    if (board[i][0]==O && board[i][1]==O && board[i][2] == O)
+      return O;
+  }
+  //Vertical wins
+  for (i = 0; i < 3; i++) {
+    if (board[0][i]==X && board[1][i]==X && board[2][i] == X)
+      return X;
+    if (board[0][i]==O && board[1][i]==O && board[2][i] == O)
+      return O;
+  }
+  //Diagonal wins
+  if (board[0][0]==X && board[1][1]==X && board[2][2] == X)
+    return X;
+  if (board[0][0]==O && board[1][1]==O && board[2][2] == O)
+    return O;
+  if (board[0][2]==X && board[1][1]==X && board[2][0] == X)
+    return X;
+  if (board[0][2]==O && board[1][1]==O && board[2][0] == O)
+    return O;
+  //Check if board filled
+  bool existsBlank = false;
+  for (i = 0; !(existsBlank) && i < 9; i++) {
+    if (board[i / 3][i % 3] == Blank)
+      existsBlank = true;
+  }
+  if (!(existsBlank)) return Blank;
+  //Otherwise no win
   return Invalid;
 }
